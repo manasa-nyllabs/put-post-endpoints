@@ -22,8 +22,12 @@ provider:
   runtime: nodejs4.3
 
 # you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
+  stage: dev
+  region: us-east-1
+  role: arn:aws:iam::164336801877:role/cbLambdaRole
+  environment:
+    DYNAMODB_TABLE: V3_USER
+
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -54,8 +58,14 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  CreateUser:
+    handler: userService.createUser
+    events:
+      - http:
+          path: user
+          method: post
+          cors: true
+
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
