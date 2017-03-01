@@ -27,7 +27,7 @@ provider:
   profile: ${self:custom.profiles.${self:provider.stage}}
   role: arn:aws:iam::164336801877:role/cbLambdaRole
   environment:
-    DYNAMODB_TABLE: V3_USER
+    DYNAMODB_TABLE: V3_User
 
 
 # you can add statements to the Lambda function's IAM Role here
@@ -51,6 +51,7 @@ provider:
 
 # you can add packaging information here
 package:
+  individually: true
 #  include:
 #    - include-me.js
 #    - include-me-dir/**
@@ -79,6 +80,9 @@ functions:
             arn: arn:aws:cognito-idp:us-east-1:164336801877:userpool/us-east-1_z6m8QUoCq
             claims:
               - email
+    package:
+      include:
+        - node_modules/hat/**
 
 
 #    The following are a few example events you can configure

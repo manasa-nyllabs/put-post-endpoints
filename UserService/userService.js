@@ -79,7 +79,10 @@ module.exports.createUser = function(event, context, callback) {
         else {
             const response = {
                 statusCode: 200,
-                body: "Row added"
+                body: "Row added",
+                headers: {
+                    "Access-Control-Allow-Origin" : "*" // Required for CORS support to work
+                }
             };
             callback(null, response);
         }
@@ -128,14 +131,16 @@ module.exports.createUser = function(event, context, callback) {
         // 2. Phones
         var phones = [];
         if(newUser.resPhone){
-            var resPhone = newUser.resPhone;
-            resPhone.type = "R";
+            var residence = {};
+            residence.number = newUser.resPhone;
+            residence.type = "R";
         }
         if(newUser.offPhone){
-            var offPhone = newUser.offPhone;
-            offPhone.type = "O";
+            var office = {};
+            office.number = newUser.offPhone;
+            office.type = "O";
         }
-        phones.push(resPhone, offPhone);
+        phones.push(residence, office);
         finalUser.contactInfo.phones = phones;
 
         // 3. SSN
