@@ -24,6 +24,8 @@ provider:
 # you can overwrite defaults here
   stage: dev
   region: us-east-1
+  stage: ${opt:stage, self:custom.defaultStage}
+  profile: ${self:custom.profiles.${self:provider.stage}}
   role: arn:aws:iam::164336801877:role/cbLambdaRole
   environment:
     DYNAMODB_TABLE: V3_USER
@@ -49,13 +51,20 @@ provider:
 #    variable1: value1
 
 # you can add packaging information here
-#package:
+package:
 #  include:
 #    - include-me.js
 #    - include-me-dir/**
-#  exclude:
-#    - exclude-me.js
+  exclude:
+    - node_modules/**
 #    - exclude-me-dir/**
+
+custom:
+  defaultStage: dev
+  profiles:
+    dev: devProfile
+    stag: stagProfile
+
 
 functions:
   CreateUser:
@@ -65,6 +74,12 @@ functions:
           path: user
           method: post
           cors: true
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: arn:aws:cognito-idp:us-east-1:164336801877:userpool/us-east-1_z6m8QUoCq
+            claims:
+              - email
 
 
 #    The following are a few example events you can configure
