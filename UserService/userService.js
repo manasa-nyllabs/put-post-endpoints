@@ -9,7 +9,7 @@ var AWS = require("aws-sdk");
 const doc = require('dynamodb-doc');
 const dynamo = new doc.DynamoDB();
 const hat = require('hat');
-var dynamoPromise = require('./utils/dynamoPromise');
+//var dynamoPromise = require('./utils/dynamoPromise');
 
 //var docClient = new AWS.DynamoDB.DocumentClient();
 
@@ -26,43 +26,43 @@ module.exports.createUser = function(event, context, callback) {
         Item : finalUser
     };
 
-    return dynamoPromise
-        .put(params)
-        .then(
-            function (data) {
-                console.log("success");
-                const response = {
-                    statusCode: 200,
-                    body: "User successfully created",
-                    headers: {
-                        "Access-Control-Allow-Origin" : "*" // Required for CORS support to work
-                    }
-                };
-                console.log(response);
+    // return dynamoPromise
+    //     .put(params)
+    //     .then(
+    //         function (data) {
+    //             console.log("success");
+    //             const response = {
+    //                 statusCode: 200,
+    //                 body: "User successfully created",
+    //                 headers: {
+    //                     "Access-Control-Allow-Origin" : "*" // Required for CORS support to work
+    //                 }
+    //             };
+    //             console.log(response);
+    //
+    //             return response;
+    //     })
+    //     .catch(function (err) {
+    //         console.log("Error");
+    //         return err;
+    //     });
 
-                return response;
-        })
-        .catch(function (err) {
-            console.log("Error");
-            return err;
-        });
 
-
-    // dynamo.putItem(params, function(err, data) {
-    //     if (err){
-    //         callback(err,null);
-    //     }
-    //     else {
-    //         const response = {
-    //             statusCode: 200,
-    //             body: "User successfully created",
-    //             headers: {
-    //                 "Access-Control-Allow-Origin" : "*" // Required for CORS support to work
-    //             }
-    //         };
-    //         callback(null, response);
-    //     }
-    // });
+    dynamo.putItem(params, function(err, data) {
+        if (err){
+            callback(err,null);
+        }
+        else {
+            const response = {
+                statusCode: 200,
+                body: "User successfully created",
+                headers: {
+                    "Access-Control-Allow-Origin" : "*" // Required for CORS support to work
+                }
+            };
+            callback(null, response);
+        }
+    });
 
 
     function createNewUser(newUser) {
