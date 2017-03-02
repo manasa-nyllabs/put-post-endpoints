@@ -9,67 +9,43 @@ var AWS = require("aws-sdk");
 const doc = require('dynamodb-doc');
 const dynamo = new doc.DynamoDB();
 const hat = require('hat');
+//var dynamoPromise = require('./utils/dynamoPromise');
 
-var docClient = new AWS.DynamoDB.DocumentClient();
+//var docClient = new AWS.DynamoDB.DocumentClient();
 
 const TABLE_NAME = process.env.DYNAMODB_TABLE;
 
 // LAMBDA TO CREATE A USER --
 module.exports.createUser = function(event, context, callback) {
     var Id = hat();
-
-    // Expected body from the user
-    // var newUser = {
-    //     "email" : "seshasaisrivatsav@gmail.com",
-    //     "resAddress" : {
-    //         "addLine1" : "40 Newport Pkwy",
-    //         "addLine2" : "apt 3302",
-    //         "zip" : "07310",
-    //         "city" : "Jersey City",
-    //         "state" : "New Jersey",
-    //         "country" : "United States of America"
-    //     },
-    //     "offAddress" : {
-    //         "addLine1" : "245 5th Avenue",
-    //         "addLine2" : "1502",
-    //         "zip" : "10016",
-    //         "city" : "New York City",
-    //         "state" : "New York",
-    //         "country" : "United States of America"
-    //     },
-    //     "resPhone" : 6174479680,
-    //     "offPhone" : 6178978907,
-    //     "govtId" : {
-    //         "dob": 692496052,
-    //         "docId": "afefbsgb",
-    //         "lName": "kuchibhotla",
-    //         //"mName" : "",
-    //         "fName": "Sesha Sai Srivatsav",
-    //         "type": "DL"
-    //     },
-    //
-    //     "citizenship" : "India",
-    //     "dob" : 692496052,
-    //     "lName": "kuchibhotla",
-    //     //"mName" : "",
-    //     "fName": "Sesha Sai Srivatsav",
-    //     "ssn" : 1221221231
-    //    };
-
-
-
-
-
     var newUser = JSON.parse(event.body);
-
     var finalUser = createNewUser(newUser);
-
 
     var params = {
         TableName : TABLE_NAME,
         Item : finalUser
     };
 
+    // return dynamoPromise
+    //     .put(params)
+    //     .then(
+    //         function (data) {
+    //             console.log("success");
+    //             const response = {
+    //                 statusCode: 200,
+    //                 body: "User successfully created",
+    //                 headers: {
+    //                     "Access-Control-Allow-Origin" : "*" // Required for CORS support to work
+    //                 }
+    //             };
+    //             console.log(response);
+    //
+    //             return response;
+    //     })
+    //     .catch(function (err) {
+    //         console.log("Error");
+    //         return err;
+    //     });
 
 
     dynamo.putItem(params, function(err, data) {
@@ -79,7 +55,7 @@ module.exports.createUser = function(event, context, callback) {
         else {
             const response = {
                 statusCode: 200,
-                body: "Row added",
+                body: "User successfully created",
                 headers: {
                     "Access-Control-Allow-Origin" : "*" // Required for CORS support to work
                 }
@@ -87,6 +63,7 @@ module.exports.createUser = function(event, context, callback) {
             callback(null, response);
         }
     });
+
 
     function createNewUser(newUser) {
 
@@ -161,7 +138,7 @@ module.exports.createUser = function(event, context, callback) {
 
         // 6. timeStamp
         var date = new  Date().getTime();
-        finalUser.timeStamps = {
+        finalUser.timestamps = {
             insertTs: date
         };
 
